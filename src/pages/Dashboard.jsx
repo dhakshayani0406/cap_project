@@ -6,6 +6,7 @@ import { useAssessment } from '../context/AssessmentContext';
 import { MetricCard } from '../components/MetricCard';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { BarChart, PieChart, ScatterChart, riskColor } from '../components/Charts';
 
 export const Dashboard = () => {
   const { user } = useAuth();
@@ -16,6 +17,17 @@ export const Dashboard = () => {
     selectAssessment(assessment);
     navigate(`/result/${assessment.id}`);
   };
+
+  const list = assessments || [];
+  const riskData = [
+    { label: 'Low', value: stats.lowRisk || 0, color: riskColor('Low Risk') },
+    { label: 'Medium', value: stats.mediumRisk || 0, color: riskColor('Medium Risk') },
+    { label: 'High', value: stats.highRisk || 0, color: riskColor('High Risk') },
+  ];
+  const bins = [['300-499', 300, 499], ['500-599', 500, 599], ['600-699', 600, 699], ['700-799', 700, 799], ['800-850', 800, 850]];
+  const binData = bins.map(([label, lo, hi]) => ({ label, value: list.filter((a) => a.riskScore >= lo && a.riskScore <= hi).length }));
+  const perApplicant = list.slice(0, 8).map((a) => ({ label: String(a.id).replace(/^.*?(\d+)$/, '$1'), value: a.riskScore, color: riskColor(a.prediction) }));
+  const scatter = list.map((a) => ({ x: a.riskScore, y: a.defaultProbability ?? 0.1, label: String(a.id).replace(/^.*?(\d+)$/, '$1'), color: riskColor(a.prediction) }));
 
   return (
     <div className="container page-wrapper">
@@ -68,6 +80,27 @@ export const Dashboard = () => {
           trend="Elevated default risk"
         />
       </div>
+
+      {/* Live Charts (computed from assessments) */}
+      <div className="group-comparison-grid" style={{ marginBottom: '24px' }}>
+        <Card title="Records per Risk Category" subtitle="Updates as you add assessments">
+          <BarChart data={riskData} yLabel="Records" />
+        </Card>
+        <Card title="Share of Records" subtitle="Risk category split">
+          <PieChart data={riskData} />
+        </Card>
+      </div>
+      <div className="group-comparison-grid" style={{ marginBottom: '24px' }}>
+        <Card title="Credit Score Distribution" subtitle="Score intervals (300-850 scale)">
+          <BarChart data={binData} yLabel="Records" />
+        </Card>
+        <Card title="Score per Applicant" subtitle="Latest applicants, colored by risk">
+          <BarChart data={perApplicant} yMin={300} yMax={850} />
+        </Card>
+      </div>
+      <Card title="Score vs Estimated Default Probability" subtitle="Each dot is an assessed applicant; dashed line is a logistic trend" style={{ marginBottom: '24px' }}>
+        <ScatterChart points={scatter} />
+      </Card>
 
       {/* Recent Assessments Table */}
       <Card

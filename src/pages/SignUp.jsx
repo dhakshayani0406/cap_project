@@ -53,7 +53,7 @@ export const SignUp = () => {
       });
       navigate('/dashboard');
     } catch (err) {
-      setError('Failed to create account. Please try again.');
+      setError(err?.message || 'Failed to create account. Please try again.');
     } finally {
       setLoading(false);
     }

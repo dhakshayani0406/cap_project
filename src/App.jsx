@@ -5,6 +5,7 @@ import { AssessmentProvider } from './context/AssessmentContext';
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
@@ -28,13 +29,13 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/assessment" element={<RiskAssessment />} />
-                <Route path="/result" element={<RiskResult />} />
-                <Route path="/result/:id" element={<RiskResult />} />
-                <Route path="/explainability" element={<Explainability />} />
-                <Route path="/fairness" element={<FairnessAnalysis />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/assessment" element={<ProtectedRoute><RiskAssessment /></ProtectedRoute>} />
+                <Route path="/result" element={<ProtectedRoute><RiskResult /></ProtectedRoute>} />
+                <Route path="/result/:id" element={<ProtectedRoute><RiskResult /></ProtectedRoute>} />
+                <Route path="/explainability" element={<ProtectedRoute><Explainability /></ProtectedRoute>} />
+                <Route path="/fairness" element={<ProtectedRoute><FairnessAnalysis /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>

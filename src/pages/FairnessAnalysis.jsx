@@ -3,10 +3,13 @@ import { Scale, CheckCircle2, AlertCircle, Info, BarChart2, ShieldCheck, Users }
 import { api } from '../services/api';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { BarChart } from '../components/Charts';
+import { useAssessment } from '../context/AssessmentContext';
 
 export const FairnessAnalysis = () => {
   const [fairnessData, setFairnessData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { assessments } = useAssessment();
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -184,6 +187,38 @@ export const FairnessAnalysis = () => {
           </div>
         </Card>
       </div>
+
+      {/* Live Fairness Charts */}
+      {(() => {
+        const pct = (v) => parseFloat(v) || 0;
+        const palette = ['#2f74b5', '#12355B', '#159A9C', '#f1c40f'];
+        const genderRate = fairnessData.genderGroups.map((g, i) => ({ label: g.group, value: pct(g.approvalRate), color: palette[i % 4] }));
+        const genderScore = fairnessData.genderGroups.map((g, i) => ({ label: g.group, value: Number(g.avgScore) || 0, color: palette[i % 4] }));
+        const ageRate = fairnessData.ageGroups.map((g) => ({ label: g.group, value: pct(g.approvalRate), color: pct(g.approvalRate) < 60 ? '#c0392b' : '#2f74b5' }));
+        const probByGender = fairnessData.genderGroups.map((g, i) => {
+          const rows = (assessments || []).filter((a) => String(g.group).toLowerCase().startsWith((a.applicant?.gender || '#').toLowerCase()));
+          const v = rows.length ? rows.reduce((s, a) => s + (a.defaultProbability ?? 0), 0) / rows.length : 0;
+          return { label: g.group, value: Number(v.toFixed(3)), color: palette[i % 4] };
+        });
+        const dir = Number(fairnessData.disparateImpactRatio) || 0;
+        const dpd = pct(fairnessData.demographicParityDiff);
+        return (
+          <div style={{ marginTop: '28px' }}>
+            <div className="group-comparison-grid" style={{ marginBottom: '24px' }}>
+              <Card title="Low-Risk Rate by Gender (%)"><BarChart data={genderRate} yMax={100} format={(v) => v} /></Card>
+              <Card title="Low-Risk Rate by Age Group (%)"><BarChart data={ageRate} yMax={100} format={(v) => v} /></Card>
+            </div>
+            <div className="group-comparison-grid" style={{ marginBottom: '24px' }}>
+              <Card title="Mean Credit Score by Gender"><BarChart data={genderScore} yMin={300} yMax={850} /></Card>
+              <Card title="Mean Default Probability by Gender"><BarChart data={probByGender} /></Card>
+            </div>
+            <div className="group-comparison-grid">
+              <Card title="Disparate Impact Ratio"><BarChart data={[{ label: 'Current data', value: dir, color: dir >= 0.8 ? '#2f74b5' : '#c0392b' }]} yMax={1.2} threshold={0.8} thresholdLabel="0.80 four-fifths rule" format={(v) => v.toFixed(2)} /></Card>
+              <Card title="Demographic Parity Difference (%)"><BarChart data={[{ label: 'Current data', value: dpd, color: dpd > 10 ? '#c0392b' : '#2f74b5' }]} yMax={50} /></Card>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* College Capstone Evaluation Note */}
       <div style={{ marginTop: '28px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-lg)', padding: '20px', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>

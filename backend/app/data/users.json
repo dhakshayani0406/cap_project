@@ -1,0 +1,20 @@
+[
+  {
+    "id": "USR-101",
+    "fullName": "Aditya Sharma",
+    "email": "aditya.sharma@example.com",
+    "password": "password123",
+    "role": "Risk Analyst / Capstone Reviewer",
+    "memberSince": "July 2025",
+    "department": "Credit Analytics & Governance"
+  },
+  {
+    "id": "USR-102",
+    "fullName": "abc",
+    "email": "abc@gmail.com",
+    "password": "123456",
+    "role": "Risk Analyst / Reviewer",
+    "memberSince": "October 2026",
+    "department": "Credit Risk & Governance"
+  }
+]

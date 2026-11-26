@@ -8,8 +8,8 @@
  * 3. Ensure your backend returns the expected JSON fields as shown in the mock responses.
  */
 
-export const USE_MOCK = true;
-export const API_BASE_URL = 'http://localhost:5000/api';
+export const USE_MOCK = false; // Connected to Python FastAPI ML Backend
+export const API_BASE_URL = 'http://127.0.0.1:5000/api';
 
 // Initial starter mock dataset simulating Home Credit Default Risk benchmark
 const INITIAL_ASSESSMENTS = [
@@ -368,14 +368,27 @@ export const api = {
   // Auth
   login: async (email, password) => {
     if (!USE_MOCK) {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      return res.json();
+      let res;
+      try {
+        res = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+      } catch (err) {
+        throw new Error('Cannot reach the server. Please make sure the backend is running.');
+      }
+      if (!res.ok) {
+        // Wrong email/password (401) or any other server error -> NEVER log in
+        throw new Error('Invalid email or password');
+      }
+      const data = await res.json();
+      if (data.user) {
+        localStorage.setItem('credit_user_session', JSON.stringify(data.user));
+      }
+      return data;
     }
-    // Mock simulation
+    // Mock simulation (only when USE_MOCK = true)
     return new Promise((resolve) => {
       setTimeout(() => {
         const user = {
@@ -388,18 +401,33 @@ export const api = {
         };
         localStorage.setItem('credit_user_session', JSON.stringify(user));
         resolve({ success: true, user });
-      }, 400);
+      }, 300);
     });
   },
 
   signup: async (userData) => {
     if (!USE_MOCK) {
-      const res = await fetch(`${API_BASE_URL}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-      });
-      return res.json();
+      let res;
+      try {
+        res = await fetch(`${API_BASE_URL}/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData)
+        });
+      } catch (err) {
+        throw new Error('Cannot reach the server. Please make sure the backend is running.');
+      }
+      if (res.status === 409) {
+        throw new Error('An account with this email already exists');
+      }
+      if (!res.ok) {
+        throw new Error('Failed to create account');
+      }
+      const data = await res.json();
+      if (data.user) {
+        localStorage.setItem('credit_user_session', JSON.stringify(data.user));
+      }
+      return data;
     }
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -408,12 +436,12 @@ export const api = {
           fullName: userData.fullName,
           email: userData.email,
           role: "Risk Analyst / Reviewer",
-          memberSince: "September 2026",
+          memberSince: "October 2026",
           department: "Credit Risk & Governance"
         };
         localStorage.setItem('credit_user_session', JSON.stringify(user));
         resolve({ success: true, user });
-      }, 400);
+      }, 300);
     });
   },
 
@@ -426,17 +454,7 @@ export const api = {
         return null;
       }
     }
-    // Default fallback demo user for effortless presentation
-    const defaultUser = {
-      id: "USR-101",
-      fullName: "Aditya Sharma",
-      email: "aditya.sharma@example.com",
-      role: "Risk Analyst / Capstone Reviewer",
-      memberSince: "July 2025",
-      department: "Credit Analytics & Governance"
-    };
-    localStorage.setItem('credit_user_session', JSON.stringify(defaultUser));
-    return defaultUser;
+    return null; // not logged in
   },
 
   updateProfile: async (updatedData) => {
@@ -454,20 +472,32 @@ export const api = {
   // Assessments
   getAssessments: async () => {
     if (!USE_MOCK) {
-      const res = await fetch(`${API_BASE_URL}/assessments`);
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE_URL}/assessments`);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        console.warn("Backend assessments unavailable, using local store", err);
+      }
     }
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(getStoredAssessments());
-      }, 250);
+      }, 200);
     });
   },
 
   getAssessmentById: async (id) => {
     if (!USE_MOCK) {
-      const res = await fetch(`${API_BASE_URL}/assessments/${id}`);
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE_URL}/assessments/${id}`);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        console.warn("Backend assessment fetch unavailable, using local store", err);
+      }
     }
     const assessments = getStoredAssessments();
     const found = assessments.find(a => a.id === id);
@@ -475,22 +505,45 @@ export const api = {
   },
 
   submitAssessment: async (formData) => {
+    const payload = {
+      fullName: String(formData.fullName || ''),
+      age: parseInt(formData.age, 10) || 25,
+      gender: String(formData.gender || 'Female'),
+      education: String(formData.education || 'Higher Education'),
+      familyStatus: String(formData.familyStatus || 'Married'),
+      employmentStatus: String(formData.employmentStatus || 'Working'),
+      income: parseFloat(formData.income) || 400000.0,
+      experience: parseFloat(formData.experience) || 0.0,
+      creditHistory: String(formData.creditHistory || 'Good'),
+      existingLoans: parseInt(formData.existingLoans, 10) || 0,
+      creditAccounts: parseInt(formData.creditAccounts, 10) || 1,
+      loanAmount: parseFloat(formData.loanAmount) || 100000.0,
+      loanTerm: parseInt(formData.loanTerm, 10) || 12,
+      loanPurpose: String(formData.loanPurpose || 'Personal')
+    };
+
     if (!USE_MOCK) {
-      const res = await fetch(`${API_BASE_URL}/assessments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE_URL}/assessments`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        console.warn("Backend submit unavailable, using fallback ML calculation", err);
+      }
     }
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const calculated = calculateCreditScore(formData);
+        const calculated = calculateCreditScore(payload);
         const newRecord = {
           id: `APP-${Math.floor(1000 + Math.random() * 9000)}`,
           date: new Date().toISOString().split('T')[0],
-          applicant: { ...formData },
+          applicant: { ...payload },
           ...calculated
         };
 
@@ -502,15 +555,21 @@ export const api = {
           success: true,
           assessment: newRecord
         });
-      }, 500);
+      }, 400);
     });
   },
 
   // Fairness Analytics
   getFairnessMetrics: async () => {
     if (!USE_MOCK) {
-      const res = await fetch(`${API_BASE_URL}/fairness`);
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE_URL}/fairness`);
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        console.warn("Backend fairness unavailable, calculating locally", err);
+      }
     }
 
     const assessments = getStoredAssessments();
