@@ -1,5 +1,173 @@
 [
   {
+    "id": "APP-2828",
+    "date": "2026-11-27",
+    "applicant": {
+      "fullName": "Priya",
+      "age": 56,
+      "gender": "Female",
+      "education": "Higher Education",
+      "familyStatus": "Married",
+      "employmentStatus": "Working",
+      "income": 650000.0,
+      "experience": 3.0,
+      "creditHistory": "Good",
+      "existingLoans": 6,
+      "creditAccounts": 2,
+      "loanAmount": 4000000.0,
+      "loanTerm": 24,
+      "loanPurpose": "Home Renovation"
+    },
+    "riskScore": 593,
+    "prediction": "Medium Risk",
+    "defaultProbability": 0.06,
+    "status": "Manual Review",
+    "factors": [
+      {
+        "name": "Established Good Credit Track",
+        "impact": 88,
+        "type": "positive",
+        "description": "Consistent on-time repayments on past credit accounts without delinquencies."
+      },
+      {
+        "name": "Stable Employment Tenure",
+        "impact": 62,
+        "type": "positive",
+        "description": "3.0 years of verified continuous employment indicates dependable income."
+      }
+    ],
+    "riskIncreasingFactors": [
+      {
+        "name": "High Loan-to-Income Ratio",
+        "impact": 95,
+        "type": "risk",
+        "description": "Loan amount is 6.2x annual income, creating high debt servicing pressure."
+      },
+      {
+        "name": "Multiple Active Loan Liabilities",
+        "impact": 85,
+        "type": "risk",
+        "description": "Applicant already services 6 concurrent active credit lines."
+      }
+    ]
+  },
+  {
+    "id": "APP-9951",
+    "date": "2026-11-27",
+    "applicant": {
+      "fullName": "Deepak Narang",
+      "age": 35,
+      "gender": "Male",
+      "education": "Higher Education",
+      "familyStatus": "Married",
+      "employmentStatus": "Commercial Associate",
+      "income": 950000.0,
+      "experience": 7.0,
+      "creditHistory": "Good",
+      "existingLoans": 1,
+      "creditAccounts": 3,
+      "loanAmount": 300000.0,
+      "loanTerm": 24,
+      "loanPurpose": "Home Renovation"
+    },
+    "riskScore": 665,
+    "prediction": "Medium Risk",
+    "defaultProbability": 0.01,
+    "status": "Manual Review",
+    "factors": [
+      {
+        "name": "Established Good Credit Track",
+        "impact": 88,
+        "type": "positive",
+        "description": "Consistent on-time repayments on past credit accounts without delinquencies."
+      },
+      {
+        "name": "High Income Capacity",
+        "impact": 82,
+        "type": "positive",
+        "description": "Declared yearly income of \u20b9950,000 supports comfortable disposable cash flow."
+      },
+      {
+        "name": "Stable Employment Tenure",
+        "impact": 78,
+        "type": "positive",
+        "description": "7.0 years of verified continuous employment indicates dependable income."
+      },
+      {
+        "name": "Conservative Loan-to-Income",
+        "impact": 58,
+        "type": "positive",
+        "description": "Requested loan of \u20b9300,000 is well within safe leverage boundaries relative to declared annual income."
+      }
+    ],
+    "riskIncreasingFactors": [
+      {
+        "name": "Macroeconomic Sensitivity",
+        "impact": 20,
+        "type": "risk",
+        "description": "Standard market risk exposure with no severe adverse flags detected."
+      }
+    ]
+  },
+  {
+    "id": "APP-3215",
+    "date": "2026-11-27",
+    "applicant": {
+      "fullName": "Deepak Narang",
+      "age": 35,
+      "gender": "Male",
+      "education": "Higher Education",
+      "familyStatus": "Married",
+      "employmentStatus": "Commercial Associate",
+      "income": 950000.0,
+      "experience": 7.0,
+      "creditHistory": "Good",
+      "existingLoans": 1,
+      "creditAccounts": 3,
+      "loanAmount": 300000.0,
+      "loanTerm": 24,
+      "loanPurpose": "Home Renovation"
+    },
+    "riskScore": 665,
+    "prediction": "Medium Risk",
+    "defaultProbability": 0.01,
+    "status": "Manual Review",
+    "factors": [
+      {
+        "name": "Established Good Credit Track",
+        "impact": 88,
+        "type": "positive",
+        "description": "Consistent on-time repayments on past credit accounts without delinquencies."
+      },
+      {
+        "name": "High Income Capacity",
+        "impact": 82,
+        "type": "positive",
+        "description": "Declared yearly income of \u20b9950,000 supports comfortable disposable cash flow."
+      },
+      {
+        "name": "Stable Employment Tenure",
+        "impact": 78,
+        "type": "positive",
+        "description": "7.0 years of verified continuous employment indicates dependable income."
+      },
+      {
+        "name": "Conservative Loan-to-Income",
+        "impact": 58,
+        "type": "positive",
+        "description": "Requested loan of \u20b9300,000 is well within safe leverage boundaries relative to declared annual income."
+      }
+    ],
+    "riskIncreasingFactors": [
+      {
+        "name": "Macroeconomic Sensitivity",
+        "impact": 20,
+        "type": "risk",
+        "description": "Standard market risk exposure with no severe adverse flags detected."
+      }
+    ]
+  },
+  {
     "id": "APP-9839",
     "date": "2026-11-27",
     "applicant": {

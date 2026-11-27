@@ -16,5 +16,23 @@
     "role": "Risk Analyst / Reviewer",
     "memberSince": "October 2026",
     "department": "Credit Risk & Governance"
+  },
+  {
+    "id": "USR-103",
+    "fullName": "lkmo",
+    "email": "lkmo@gmail.com",
+    "password": "123456",
+    "role": "Risk Analyst / Reviewer",
+    "memberSince": "October 2026",
+    "department": "Credit Risk & Governance"
+  },
+  {
+    "id": "USR-104",
+    "fullName": "abcd",
+    "email": "abcd@gmail.com",
+    "password": "123456",
+    "role": "Risk Analyst / Reviewer",
+    "memberSince": "October 2026",
+    "department": "Credit Risk & Governance"
   }
 ]
